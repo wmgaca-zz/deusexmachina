@@ -1,0 +1,57 @@
+
+user
+    active: bool(false)
+    authenticated: bool(false)
+    agent: bool(false)
+    landlord: bool(false)
+    rules_agreed: int(0)
+    payed: bool(false)
+
+state.register
+    create user
+    goto place_an_ad
+
+state.registered
+    create user
+    user.active = true
+    user.authenticated = true
+    user.rules_agreed = true
+
+state.place_an_ad
+    goto enter_details
+
+state.enter_details
+    var has_to_pay: bool
+    var is_valid: bool
+
+    not is_valid? goto enter_details
+    user.rules_agreed < 2? goto rules
+    not user.authenticated? goto sms_auth
+    not has_to_pay? user.payed = true
+    has_to_pay? goto payment
+    goto complete
+
+state.rules
+    var agreed: bool
+
+    agreed? 
+        user.rules_agreed += 1
+        goto complete
+    goto rules
+
+state.payment
+    var success: bool
+
+    success?
+        user.payed = true
+        goto payment_success
+    not success?
+        user.payed = false
+        goto payment_fail
+
+state.complete
+    assert user.active == true
+    assert user.authenticated = true
+    assert rules.agreed = true
+
+start = [register, registered]
