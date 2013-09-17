@@ -1,4 +1,3 @@
-
 user
     active: bool(false)
     authenticated: bool(false)
@@ -51,7 +50,7 @@ state.payment
 
 state.complete
     assert user.active == true
-    assert user.authenticated = true
-    assert rules.agreed = true
+    assert user.authenticated == true
+    assert rules.agreed == true
 
 start = [register, registered]
