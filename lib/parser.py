@@ -1,5 +1,5 @@
 import re
-from lib import quit, Node
+from lib import Node
 
 def _line_empty(line):
     return re.match(r'^\s+$', line)
@@ -19,9 +19,13 @@ def parse(fpath):
     :rtype lib.types.Node
     """
 
-    with open(fpath) as f:
-        lines = f.readlines()
 
+    try:
+        with open(fpath) as f:
+            lines = f.readlines()
+    except IOError:
+        print 'Cannot open %s' % fpath
+        exit()
     prev_indent = 0
     root = Node()
     current = root
@@ -47,3 +51,5 @@ def parse(fpath):
 
     for child in root.children:
         print child
+
+    return root
