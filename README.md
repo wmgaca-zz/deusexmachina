@@ -1,6 +1,6 @@
 # deus ex machina
 
-## Wat?
+## WAT? ಠ_ಠ
 
 Here you go:
 
