@@ -1,8 +1,9 @@
 import re
 from lib import Node
 
+
 def _line_empty(line):
-    return re.match(r'^\s+$', line)
+    return not line.strip()
 
 
 def _get_indent(line):
@@ -19,35 +20,33 @@ def parse(fpath):
     :rtype lib.types.Node
     """
 
-
     try:
         with open(fpath) as f:
             lines = f.readlines()
     except IOError:
         print 'Cannot open %s' % fpath
         exit()
-    prev_indent = 0
-    root = Node()
-    current = root
-    
+
+    root = Node('root', None, 0)
+    parent = root
+
     for line in lines:
+        line = line.rstrip()
+
         if _line_empty(line):
             continue
 
         indent = _get_indent(line)
 
-        if indent == prev_indent:
-            current.add_child(line)
-        elif indent > prev_indent:
-            current = current.children[-1]
-            current.add_child(line)
-        elif indent < prev_indent:
-            current = current.parent
-            current.add_child(line)
+        if indent == parent.indent:
+            if parent is root:
+                root.add_child(line, indent)
+        if indent == previous.indent:
+            previous.parent.add_child(line, indent)
+        if indent > previous.indent:
+            previous.add_child(line, indent)
 
-        prev_indent = indent
-
-        print '>', line.rstrip(), _get_indent(line), Node.LAST_ADDED.parent
+        print '%s%s%s' % (line, (40 - len(line)) * ' ', indent if indent else "")
 
     for child in root.children:
         print child

@@ -11,6 +11,7 @@ def _build_node(node):
     else:
         print '- Build %s' % node
 
+
 def build(root):
     """Build TheArt objects from nodes.
 

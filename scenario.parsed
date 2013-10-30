@@ -6,36 +6,59 @@ user
     rules_agreed: int(0)
     payed: bool(false)
 
-register
+->
+
+register_global(user)
+user = new DataObject()
+user.active = bool(False)
+user.agent = bool(False)
+user.landlord = bool(False)
+user.rules_agreed = int(0)
+user.payed = bool(False)
+
+===
+
+state.register
     create user
     goto place_an_ad
 
-registered
+->
+
+state = new State()
+state.steps = [
+    create_data_object(user)
+    goto_state(place_an_ad)
+]
+
+===
+
+state.registered
     create user
     user.active = true
     user.authenticated = true
     user.rules_agreed = true
 
-place_an_ad
+->
+
+registered = State()
+    user = User()
+
+
+state.place_an_ad
     goto enter_details
 
-enter_details
+state.enter_details
     var has_to_pay: bool
     var is_valid: bool
 
-    not is_valid?
-        goto enter_details
-    user.rules_agreed < 2?
-        goto rules
-    not user.authenticated?
-        goto sms_auth
-    not has_to_pay?
-        user.payed = true
-    has_to_pay?
-        goto payment
+    not is_valid? goto enter_details
+    user.rules_agreed < 2? goto rules
+    not user.authenticated? goto sms_auth
+    not has_to_pay? user.payed = true
+    has_to_pay? goto payment
     goto complete
 
-rules
+state.rules
     var agreed: bool
 
     agreed? 
@@ -43,7 +66,7 @@ rules
         goto complete
     goto rules
 
-payment
+state.payment
     var success: bool
 
     success?
@@ -53,7 +76,7 @@ payment
         user.payed = false
         goto payment_fail
 
-complete
+state.complete
     var hello: world
     var aj : waj
     var boo     : bar
@@ -63,5 +86,4 @@ complete
     assert user.authenticated == true
     assert rules.agreed == true
 
-run register
-run registered
+start = [register, registered]
